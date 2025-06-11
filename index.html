@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Gateway</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#wa-connections" data-bs-toggle="tab">
+                                <i class="bi bi-whatsapp"></i> WA Connections
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#messages" data-bs-toggle="tab">
+                                <i class="bi bi-chat-left-text"></i> Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sunscreen" data-bs-toggle="tab">
+                                <i class="bi bi-sun"></i> Sunscreen
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#shopsign" data-bs-toggle="tab">
+                                <i class="bi bi-shop"></i> Shopsign
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#mitra" data-bs-toggle="tab">
+                                <i class="bi bi-people"></i> Mitra
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contacts" data-bs-toggle="tab">
+                                <i class="bi bi-person-lines-fill"></i> Contacts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#auto-replies" data-bs-toggle="tab">
+                                <i class="bi bi-reply-all"></i> Auto Replies
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#users" data-bs-toggle="tab">
+                                <i class="bi bi-person-gear"></i> User Management
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Dashboard</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <div class="btn-group me-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                                    <span data-feather="calendar"></span> This week
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stats Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card text-white bg-primary mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sunscreen Reports</h5>
+                                        <h2 class="card-text" id="sunscreen-count">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-success mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Shopsign Reports</h5>
+                                        <h2 class="card-text" id="shopsign-count">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-white bg-info mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Mitra Reports</h5>
+                                        <h2 class="card-text" id="mitra-count">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Messages Overview</div>
+                                    <div class="card-body">
+                                        <canvas id="messagesChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Reports by Type</div>
+                                    <div class="card-body">
+                                        <canvas id="reportsChart" height="250"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Messages -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">Recent Messages</div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-sm" id="recentMessagesTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Time</th>
+                                                        <th>Sender</th>
+                                                        <th>Message</th>
+                                                        <th>Type</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Will be populated by JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other tabs will be added here -->
+                    <div class="tab-pane fade" id="wa-connections">
+                        <!-- WA Connections content -->
+                    </div>
+                    <div class="tab-pane fade" id="messages">
+                        <!-- Messages content -->
+                    </div>
+                    <div class="tab-pane fade" id="sunscreen">
+                        <!-- Sunscreen content -->
+                    </div>
+                    <!-- Add other tabs similarly -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
