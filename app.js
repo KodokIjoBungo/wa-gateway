@@ -1,57 +1,31 @@
 require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const fileUpload = require('express-fileupload');
-const { google } = require('googleapis');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
-const { exec } = require('child_process');
 const cron = require('node-cron');
+const { whatsapp } = require('./whatsapp-client');
 
 const app = express();
 
 // Database connection
-const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'wa_gateway'
-};
+const db = require('./db');
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use(session({
-  secret: 'your-secret-key',
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { secure: false }
 }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
-
-// Google Drive Setup
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
-);
-
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'D:/uploads/');
-  },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage: storage });
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -62,6 +36,7 @@ app.use('/api/shopsign', require('./routes/shopsign'));
 app.use('/api/mitra', require('./routes/mitra'));
 app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/auto-replies', require('./routes/autoReplies'));
+app.use('/api/users', require('./routes/users'));
 app.use('/api/stats', require('./routes/stats'));
 
 // Serve index.html for all other routes
@@ -69,73 +44,42 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// WhatsApp connection monitoring
-const checkWhatsAppConnections = async () => {
-  try {
-    const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute('SELECT * FROM wa_connections WHERE status = "disconnected"');
-    
-    for (const row of rows) {
-      // Logic to reconnect WhatsApp numbers
-      console.log(`Attempting to reconnect ${row.phone_number}`);
-      // Add your WhatsApp reconnection logic here
-    }
-    
-    await connection.end();
-  } catch (error) {
-    console.error('Error checking WhatsApp connections:', error);
-  }
-};
-
 // Scheduled tasks
-cron.schedule('0 10 * * *', () => {
+cron.schedule('0 10 * * *', async () => {
   console.log('Running scheduled task at 10 AM');
-  checkWhatsAppConnections();
-  // Add other scheduled tasks here
+  try {
+    // Check for unsent messages and send them
+    const unsentMessages = await db.query(`
+      SELECT m.*, wc.session_name 
+      FROM messages m
+      JOIN wa_connections wc ON m.wa_connection_id = wc.id
+      WHERE m.status = 'pending' AND m.is_group = FALSE
+    `);
+    
+    for (const message of unsentMessages) {
+      if (whatsapp.sessions[message.session_name]) {
+        try {
+          await whatsapp.sessions[message.session_name].sendMessage(
+            message.receiver, 
+            message.message_text
+          );
+          
+          await db.query(
+            'UPDATE messages SET status = "sent" WHERE id = ?',
+            [message.id]
+          );
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error in scheduled task:', error);
+  }
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-// Scheduled task to check for unsent messages and send them
-cron.schedule('0 10 * * *', async () => {
-    console.log('Running scheduled task at 10 AM');
-    
-    try {
-        const connection = await mysql.createConnection(dbConfig);
-        
-        // Get unsent messages
-        const [unsentMessages] = await connection.execute(`
-            SELECT m.*, wc.session_name 
-            FROM messages m
-            JOIN wa_connections wc ON m.wa_connection_id = wc.id
-            WHERE m.status = 'pending' AND m.is_group = FALSE
-        `);
-        
-        for (const message of unsentMessages) {
-            if (sessions[message.session_name]) {
-                try {
-                    await sessions[message.session_name].sendMessage(
-                        message.receiver, 
-                        message.message_text
-                    );
-                    
-                    // Update status
-                    await connection.execute(
-                        'UPDATE messages SET status = "sent" WHERE id = ?',
-                        [message.id]
-                    );
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                }
-            }
-        }
-        
-        await connection.end();
-    } catch (error) {
-        console.error('Error in scheduled task:', error);
-    }
 });
