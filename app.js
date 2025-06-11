@@ -99,3 +99,43 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Scheduled task to check for unsent messages and send them
+cron.schedule('0 10 * * *', async () => {
+    console.log('Running scheduled task at 10 AM');
+    
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+        
+        // Get unsent messages
+        const [unsentMessages] = await connection.execute(`
+            SELECT m.*, wc.session_name 
+            FROM messages m
+            JOIN wa_connections wc ON m.wa_connection_id = wc.id
+            WHERE m.status = 'pending' AND m.is_group = FALSE
+        `);
+        
+        for (const message of unsentMessages) {
+            if (sessions[message.session_name]) {
+                try {
+                    await sessions[message.session_name].sendMessage(
+                        message.receiver, 
+                        message.message_text
+                    );
+                    
+                    // Update status
+                    await connection.execute(
+                        'UPDATE messages SET status = "sent" WHERE id = ?',
+                        [message.id]
+                    );
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                }
+            }
+        }
+        
+        await connection.end();
+    } catch (error) {
+        console.error('Error in scheduled task:', error);
+    }
+});
