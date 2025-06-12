@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Gateway</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <img src="images/logo.png" alt="Logo" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#wa-connections" data-bs-toggle="tab">
+                                <i class="bi bi-whatsapp me-2"></i> WA Connections
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#messages" data-bs-toggle="tab">
+                                <i class="bi bi-chat-left-text me-2"></i> Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sunscreen" data-bs-toggle="tab">
+                                <i class="bi bi-sun me-2"></i> Sunscreen
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#shopsign" data-bs-toggle="tab">
+                                <i class="bi bi-shop me-2"></i> Shopsign
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#mitra" data-bs-toggle="tab">
+                                <i class="bi bi-people me-2"></i> Mitra
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contacts" data-bs-toggle="tab">
+                                <i class="bi bi-person-lines-fill me-2"></i> Contacts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#auto-replies" data-bs-toggle="tab">
+                                <i class="bi bi-reply-all me-2"></i> Auto Replies
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#users" data-bs-toggle="tab">
+                                <i class="bi bi-person-gear me-2"></i> Users
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a class="nav-link text-danger" href="#" id="logout-btn">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <!-- Dashboard content will be loaded dynamically -->
+                    </div>
+
+                    <!-- WA Connections Tab -->
+                    <div class="tab-pane fade" id="wa-connections">
+                        <!-- WA Connections content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Messages Tab -->
+                    <div class="tab-pane fade" id="messages">
+                        <!-- Messages content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Sunscreen Tab -->
+                    <div class="tab-pane fade" id="sunscreen">
+                        <!-- Sunscreen content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Shopsign Tab -->
+                    <div class="tab-pane fade" id="shopsign">
+                        <!-- Shopsign content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Mitra Tab -->
+                    <div class="tab-pane fade" id="mitra">
+                        <!-- Mitra content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Contacts Tab -->
+                    <div class="tab-pane fade" id="contacts">
+                        <!-- Contacts content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Auto Replies Tab -->
+                    <div class="tab-pane fade" id="auto-replies">
+                        <!-- Auto Replies content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Users Tab -->
+                    <div class="tab-pane fade" id="users">
+                        <!-- Users content will be loaded dynamically -->
+                    </div>
+
+                    <!-- Login Tab (hidden when logged in) -->
+                    <div class="tab-pane fade" id="login">
+                        <div class="row justify-content-center mt-5">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card shadow">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-center mb-4">Login</h3>
+                                        <form id="login-form">
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">Username</label>
+                                                <input type="text" class="form-control" id="username" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">Password</label>
+                                                <input type="password" class="form-control" id="password" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal for QR Code -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scan QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="qrCodeContainer"></div>
+                    <p class="mt-3">Scan this QR code with your WhatsApp mobile app</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Message Details -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="messageDetailsContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/waConnections.js"></script>
+    <script src="js/messages.js"></script>
+    <script src="js/sunscreen.js"></script>
+    <script src="js/shopsign.js"></script>
+    <script src="js/mitra.js"></script>
+    <script src="js/contacts.js"></script>
+    <script src="js/autoReplies.js"></script>
+    <script src="js/users.js"></script>
+    <script src="js/stats.js"></script>
+</body>
+</html>
