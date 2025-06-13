@@ -22,11 +22,11 @@ CREATE TABLE WAConnections (
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Messages table
+-- Messages table (corrected with backticks around reserved words)
 CREATE TABLE Messages (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  from VARCHAR(20) NOT NULL,
-  to VARCHAR(20) NOT NULL,
+  `from` VARCHAR(20) NOT NULL,
+  `to` VARCHAR(20) NOT NULL,
   body TEXT NOT NULL,
   mediaUrl VARCHAR(255),
   isGroup BOOLEAN DEFAULT false,
@@ -49,7 +49,7 @@ CREATE TABLE Sunscreen (
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Shopsign table (similar structure)
+-- Shopsign table
 CREATE TABLE Shopsign (
   id INT AUTO_INCREMENT PRIMARY KEY,
   code VARCHAR(20) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE Shopsign (
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Mitra table (similar structure)
+-- Mitra table
 CREATE TABLE Mitra (
   id INT AUTO_INCREMENT PRIMARY KEY,
   code VARCHAR(20) NOT NULL,
